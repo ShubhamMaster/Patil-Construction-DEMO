@@ -236,9 +236,10 @@ function JobCardModal({ id, onClose, setCardField }: { id: string; onClose: () =
         <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Material & labour</div>
         {card.lines.length === 0 && <p className="text-sm text-slate-400">No items yet - add from the repair rate list below.</p>}
         {card.lines.map((l) => (
-          <div key={l.code} className="flex items-center gap-2 text-sm">
+          <div key={l.code} className="flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-slate-100 pb-2 text-sm sm:flex-nowrap sm:border-0 sm:pb-0">
             <span className={`h-2 w-2 shrink-0 rounded-full ${l.kind === "Labour" ? "bg-sky-500" : l.kind === "Service" ? "bg-violet-500" : "bg-slate-400"}`} />
-            <span className="min-w-0 flex-1 truncate">{l.item}</span>
+            <span className="min-w-0 basis-[calc(100%-1rem)] sm:basis-auto sm:flex-1 sm:truncate">{l.item}</span>
+            <span className="w-2 sm:hidden" />
             <input type="number" min={0} step="0.5" className="w-16 rounded border border-slate-300 px-1.5 py-1 text-right text-sm" value={l.qty}
               onChange={(e) => setLines(card.lines.map((x) => (x.code === l.code ? { ...x, qty: Number(e.target.value) } : x)))} />
             <span className="w-10 text-xs text-slate-500">{l.unit}</span>
@@ -248,8 +249,8 @@ function JobCardModal({ id, onClose, setCardField }: { id: string; onClose: () =
           </div>
         ))}
         <div className="flex flex-wrap items-end gap-2 rounded-lg border border-dashed border-slate-300 p-2">
-          <select className={`${inputCls} w-32 py-1.5`} value={trade} onChange={(e) => { setTrade(e.target.value); const first = repairRates.find((r) => e.target.value === "All" || r.trade === e.target.value); setCode(first?.code ?? ""); }}>{["All", ...trades].map((t) => <option key={t}>{t}</option>)}</select>
-          <select className={`${inputCls} min-w-0 flex-1 py-1.5`} value={code} onChange={(e) => setCode(e.target.value)}>{options.map((r) => <option key={r.code} value={r.code}>{r.item} - ₹{r.rate}/{r.unit}</option>)}</select>
+          <select className={`${inputCls} w-full py-1.5 sm:w-32`} value={trade} onChange={(e) => { setTrade(e.target.value); const first = repairRates.find((r) => e.target.value === "All" || r.trade === e.target.value); setCode(first?.code ?? ""); }}>{["All", ...trades].map((t) => <option key={t}>{t}</option>)}</select>
+          <select className={`${inputCls} min-w-0 basis-full py-1.5 sm:basis-0 sm:flex-1`} value={code} onChange={(e) => setCode(e.target.value)}>{options.map((r) => <option key={r.code} value={r.code}>{r.item} - ₹{r.rate}/{r.unit}</option>)}</select>
           <input className={`${inputCls} w-20 py-1.5`} type="number" min={0} step="0.5" value={qty} onChange={(e) => setQty(e.target.value)} />
           <Button size="sm" icon="Plus" onClick={add}>Add</Button>
         </div>

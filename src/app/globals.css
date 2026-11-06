@@ -5,3 +5,7 @@
 }
 
 html { -webkit-tap-highlight-color: transparent; }
+
+/* Grid and flex children may shrink below their content width, so wide tables scroll inside their card instead of stretching the page. */
+.grid > *, main section { min-width: 0; }
+body { overflow-x: hidden; }

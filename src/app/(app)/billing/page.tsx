@@ -36,7 +36,7 @@ export default function BillingPage() {
 
   const table = (rows: Bill[]) => (
     <Card pad={false}><Table rows={rows} empty="No bills" cols={[
-      { key: "no", label: "Bill" }, ...(isClient ? [] : [{ key: "project", label: "Project", render: (r: Bill) => <span className="block max-w-[200px] truncate">{pname(r.project)}</span> }]),
+      { key: "no", label: "Bill" }, ...(isClient ? [] : [{ key: "project", label: "Project", render: (r: Bill) => <span className="block md:max-w-[200px] md:truncate">{pname(r.project)}</span> }]),
       { key: "date", label: "Date", render: (r) => fdate(r.date) },
       { key: "workValue", label: "Work value", align: "right", render: (r) => inr(r.workValue) },
       { key: "net", label: "Net payable", align: "right", render: (r) => inr(billNet(r)) },

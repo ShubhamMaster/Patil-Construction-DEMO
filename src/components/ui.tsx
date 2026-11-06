@@ -25,7 +25,7 @@ export function Card({ title, action, children, className = "", pad = true }: { 
   return (
     <section className={`rounded-xl border border-slate-200 bg-white shadow-sm ${className}`}>
       {title && (
-        <header className="flex items-center justify-between gap-2 border-b border-slate-100 px-4 py-3">
+        <header className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-4 py-3">
           <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
           {action}
         </header>
@@ -82,9 +82,35 @@ export function Progress({ value, planned, tone = "bg-orange-500" }: { value: nu
 
 export type Col<T> = { key: string; label: string; render?: (row: T) => React.ReactNode; className?: string; align?: "right" };
 export function Table<T>({ cols, rows, empty = "No records", rowKey }: { cols: Col<T>[]; rows: T[]; empty?: string; rowKey?: (r: T, i: number) => string }) {
+  const cell = (r: T, c: Col<T>) => (c.render ? c.render(r) : String((r as Record<string, unknown>)[c.key] ?? ""));
+  // Small tables stay as tables on phones; wider ones become stacked cards below the md breakpoint.
+  const stack = cols.length > 3;
+  const [head, ...rest] = cols;
+  const fields = rest.filter((c) => c.label);
+  const actions = rest.filter((c) => !c.label);
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[640px] text-left text-sm">
+    <>
+    {stack && (
+      <div className="divide-y divide-slate-100 md:hidden">
+        {rows.length === 0 && <div className="px-4 py-8 text-center text-sm text-slate-400">{empty}</div>}
+        {rows.map((r, i) => (
+          <div key={rowKey ? rowKey(r, i) : i} className="space-y-2 px-4 py-3">
+            <div className="text-sm font-semibold text-slate-800">{cell(r, head)}</div>
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+              {fields.map((c) => (
+                <div key={c.key} className="min-w-0">
+                  <dt className="text-[10px] font-medium uppercase tracking-wide text-slate-400">{c.label}</dt>
+                  <dd className="break-words text-slate-700">{cell(r, c)}</dd>
+                </div>
+              ))}
+            </dl>
+            {actions.length > 0 && <div className="flex flex-wrap justify-end gap-2">{actions.map((c) => <span key={c.key}>{cell(r, c)}</span>)}</div>}
+          </div>
+        ))}
+      </div>
+    )}
+    <div className={`overflow-x-auto ${stack ? "hidden md:block" : ""}`}>
+      <table className={`w-full text-left text-sm ${stack ? "min-w-[640px]" : ""}`}>
         <thead>
           <tr className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
             {cols.map((c) => <th key={c.key} className={`px-3 py-2.5 font-medium ${c.align === "right" ? "text-right" : ""}`}>{c.label}</th>)}
@@ -104,6 +130,7 @@ export function Table<T>({ cols, rows, empty = "No records", rowKey }: { cols: C
         </tbody>
       </table>
     </div>
+    </>
   );
 }
 

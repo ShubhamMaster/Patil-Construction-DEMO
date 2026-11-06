@@ -55,7 +55,33 @@ export default function WageSheet() {
           {status === "Pending Approval" && (role === "owner" || role === "pm") && <Button size="sm" variant="success" icon="Check" onClick={approve}>Approve sheet</Button>}
           {status === "Due" && (role === "owner" || role === "accountant") && <Button size="sm" icon="Banknote" onClick={payAll}>Pay all</Button>}
         </div>}>
-        <div className="overflow-x-auto">
+        <div className="divide-y divide-slate-100 md:hidden">
+          {rows.map(({ r, w, k }) => (
+            <div key={w.id} className="space-y-2 px-4 py-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0"><div className="font-semibold text-slate-800">{w.name}</div><div className="text-xs text-slate-500">{w.id} · {w.category} · {inr(w.rate)}/day</div></div>
+                <div className="text-right"><div className="text-base font-semibold">{inr(k.net)}</div><div className="text-[11px] text-slate-500">net pay</div></div>
+              </div>
+              <div className="flex gap-1">
+                {r.days.map((d, i) => { const m = dayMark(d); return <div key={i} className="flex-1 text-center"><div className="text-[10px] text-slate-400">{WEEK.days[i].split(" ")[0]}</div><span className={`mt-0.5 inline-flex h-6 w-full items-center justify-center rounded text-xs font-semibold ${cellTone[m]}`}>{m}</span></div>; })}
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-xs text-slate-600">
+                <span>{k.days} days{r.ot ? ` · OT ${r.ot}h` : ""}</span>
+                <span>Gross {inr(k.gross)}</span>
+                <span className="text-red-600">Ded. {inr(k.esic + k.advance)}</span>
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <Badge tone={r.mode === "Bank" ? "blue" : "slate"}>{r.mode}</Badge>
+                <div className="flex items-center gap-1">
+                  {r.paid ? <Badge tone="green">Paid</Badge> : status === "Due" && (role === "owner" || role === "accountant") ? <Button size="sm" variant="secondary" onClick={() => payOne(w.id, w.name, k.net)}>Pay</Button> : <Badge tone="amber">Pending</Badge>}
+                  <Button size="sm" variant="ghost" icon="FileDown" onClick={() => doc(`Wage slip of ${w.name}`, (s, by) => wageSlipPdf(s, w.id, by))}>Slip</Button>
+                </div>
+              </div>
+            </div>
+          ))}
+          <div className="flex justify-between bg-orange-50 px-4 py-3 text-sm font-semibold"><span>Total ({rows.length}) · {tot.days} days</span><span>{inr(tot.net)}</span></div>
+        </div>
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[1080px] text-left text-sm">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
