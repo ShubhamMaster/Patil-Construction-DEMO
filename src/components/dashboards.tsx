@@ -55,6 +55,73 @@ function Greeting({ sub }: { sub: string }) {
   return <PageHeader title={`Good morning, ${user?.name.split(" ")[0]}`} sub={`${fdate(DEMO_TODAY)} · ${sub}`} />;
 }
 
+/* ---------------- Owner: company financial profile ---------------- */
+function FinancialProfile() {
+  const { state } = useDemo();
+  const ps = state.projects;
+  const value = ps.reduce((a, p) => a + p.value, 0);
+  const totalCost = ps.reduce((a, p) => a + p.budget, 0);
+  const spent = ps.reduce((a, p) => a + p.cost, 0);
+  const toSpend = Math.max(0, totalCost - spent);
+  const profit = value - totalCost;
+  const w = (n: number) => `${Math.max(0, (n / value) * 100)}%`;
+  const rows = ps.map((p) => {
+    const spentPct = pct(p.cost, p.budget);
+    const watch = spentPct > p.progress + 5;
+    return { ...p, profit: p.value - p.budget, margin: pct(p.value - p.budget, p.value), spentPct, watch };
+  });
+
+  const tiles: [string, string, string, string][] = [
+    ["Total project value", inrShort(value), `${ps.length} projects - what we will receive`, "text-slate-900"],
+    ["Total project cost", inrShort(totalCost), "Estimated full cost of all projects", "text-slate-900"],
+    ["Spent so far", inrShort(spent), `${pct(spent, totalCost)}% of total cost`, "text-orange-700"],
+    ["Still to spend", inrShort(toSpend), "To finish all projects", "text-sky-700"],
+    ["Expected profit", inrShort(profit), `${pct(profit, value)}% margin on value`, "text-emerald-700"],
+  ];
+
+  return (
+    <Card title="Company financial profile - all projects" className="mt-4" action={<Link href="/reports" className="text-xs font-medium text-orange-700">Full profitability report</Link>}>
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+        {tiles.map(([label, val, sub, tone], i) => (
+          <div key={label} className={`rounded-lg border border-slate-200 bg-slate-50/60 p-3 ${i === 4 ? "col-span-2 md:col-span-1" : ""}`}>
+            <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">{label}</div>
+            <div className={`mt-1 text-lg font-semibold sm:text-xl ${tone}`}>{val}</div>
+            <div className="mt-0.5 text-[11px] text-slate-500">{sub}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4">
+        <div className="mb-1.5 text-xs text-slate-500">Where the total project value goes</div>
+        <div className="flex h-4 w-full overflow-hidden rounded-full bg-slate-100">
+          <div className="bg-orange-500" style={{ width: w(spent) }} title={`Spent ${inrShort(spent)}`} />
+          <div className="bg-sky-400" style={{ width: w(toSpend) }} title={`Still to spend ${inrShort(toSpend)}`} />
+          <div className="bg-emerald-500" style={{ width: w(profit) }} title={`Profit ${inrShort(profit)}`} />
+        </div>
+        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
+          <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-orange-500" />Spent {inrShort(spent)} ({pct(spent, value)}%)</span>
+          <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-sky-400" />Still to spend {inrShort(toSpend)} ({pct(toSpend, value)}%)</span>
+          <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-emerald-500" />Profit {inrShort(profit)} ({pct(profit, value)}%)</span>
+        </div>
+      </div>
+
+      <div className="-mx-4 mt-4 border-t border-slate-100">
+        <Table rows={rows} cols={[
+          { key: "name", label: "Project", render: (r) => <Link href={`/projects/${r.id}`} className="font-medium text-slate-800 hover:text-orange-700">{r.name}</Link> },
+          { key: "value", label: "Value", align: "right", render: (r) => inrShort(r.value) },
+          { key: "budget", label: "Total cost", align: "right", render: (r) => inrShort(r.budget) },
+          { key: "cost", label: "Spent so far", align: "right", render: (r) => <span>{inrShort(r.cost)} <span className="text-xs text-slate-400">({r.spentPct}%)</span></span> },
+          { key: "progress", label: "Work done", align: "right", render: (r) => `${r.progress}%` },
+          { key: "profit", label: "Expected profit", align: "right", render: (r) => <b className="text-emerald-700">{inrShort(r.profit)}</b> },
+          { key: "margin", label: "Margin", align: "right", render: (r) => `${r.margin}%` },
+          { key: "watch", label: "Cost check", render: (r) => (r.watch ? <Badge tone="amber">Spending ahead of work</Badge> : <Badge tone="green">On track</Badge>) },
+        ]} />
+      </div>
+      <p className="mt-3 text-xs text-slate-500">Total cost is the estimated full cost (budget) of each project. The cost check compares money spent with work done - if spending runs more than 5% ahead of progress, profit is at risk.</p>
+    </Card>
+  );
+}
+
 /* ---------------- Owner ---------------- */
 function OwnerDash() {
   const { state, update, notify } = useDemo();
@@ -83,6 +150,7 @@ function OwnerDash() {
         <Stat label="Payments due (7 days)" value={inrShort(dueWeek)} sub="Suppliers, subcontractors, wages" icon="Wallet" tone="amber" href="/payments" />
         <Stat label="Retention held by clients" value={inrShort(retention)} sub="Released after defect period" icon="Lock" tone="blue" href="/reports" />
       </div>
+      <FinancialProfile />
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <Card title="Billing vs collection vs cost (₹)" className="lg:col-span-2">
           <BarChart data={monthly} fmt={inrShort} series={[{ key: "billed", label: "Billed", color: "#ea580c" }, { key: "received", label: "Received", color: "#10b981" }, { key: "cost", label: "Cost", color: "#94a3b8" }]} />

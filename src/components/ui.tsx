@@ -121,7 +121,7 @@ export function Table<T>({ cols, rows, empty = "No records", rowKey }: { cols: C
           {rows.map((r, i) => (
             <tr key={rowKey ? rowKey(r, i) : i} className="hover:bg-slate-50/70">
               {cols.map((c) => (
-                <td key={c.key} className={`px-3 py-2.5 align-top text-slate-700 ${c.align === "right" ? "text-right tabular-nums" : ""} ${c.className ?? ""}`}>
+                <td key={c.key} className={`px-3 py-2.5 align-top text-slate-700 ${c.align === "right" ? "whitespace-nowrap text-right tabular-nums" : ""} ${c.className ?? ""}`}>
                   {c.render ? c.render(r) : String((r as Record<string, unknown>)[c.key] ?? "")}
                 </td>
               ))}
