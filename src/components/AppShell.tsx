@@ -8,6 +8,7 @@ import { allowed, navFor } from "@/lib/nav";
 import { useDemo } from "@/lib/store";
 import { fdate } from "@/lib/format";
 import { Icon } from "./ui";
+import HelpGuide from "./HelpGuide";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const { ready, user, logout, login, reset, toast, notify } = useDemo();
@@ -83,6 +84,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               className="hidden items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs text-slate-500 hover:bg-slate-100 sm:flex" title="Reset demo data">
               <Icon name="RotateCcw" className="h-3.5 w-3.5" /> Reset demo
             </button>
+            <HelpGuide variant="icon" />
             {user.role !== "client" && (
               <Link href="/alerts" className="relative rounded-lg p-2 text-slate-600 hover:bg-slate-100" aria-label="Alerts">
                 <Icon name="Bell" className="h-5 w-5" />
