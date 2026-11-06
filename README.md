@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Patil Constructions - Company Management System (Demo)
 
-## Getting Started
+Clickable demo of a construction company management system for one owner and all projects: client contracts, own projects, maintenance and payments.
 
-First, run the development server:
+All data is sample data kept in the browser. There is no backend in this demo.
+
+## Features
+
+- Login with 11 roles: Owner, Office Admin, Sales & Estimation, Project Manager, Site Engineer, Site Supervisor, Store Keeper, Billing Engineer, Accountant, Maintenance Technician, Client portal
+- Role-based dashboards and menus
+- Projects with BOQ, bills, change orders, delays, photos and documents
+- Enquiries and quotations pipeline
+- Daily progress reports, attendance, store and purchase, quality and delay register
+- Running bills with retention, advance recovery, TDS and GST; collections and ageing
+- Payroll: staff salary with payslips, weekly labour wage sheet with wage slips
+- Own project: flat inventory, bookings, budget and funding
+- Maintenance: complaints, job cards with material and labour costing, client estimate approval, service invoices
+- Reports: 19 reports as formatted PDF and Excel, plus bill, quotation, payslip, wage slip and job card PDFs
+
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run demo
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. The password for all demo users is `demo123`, or use the quick login cards.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+See [DEMO_GUIDE.md](DEMO_GUIDE.md) for a step-by-step demo script.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deploy to Cloudflare Workers
 
-## Learn More
+```bash
+npm run export
+npx wrangler login
+npx wrangler deploy
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Tech
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js, React, TypeScript, Tailwind CSS, jsPDF (PDF), write-excel-file (Excel).

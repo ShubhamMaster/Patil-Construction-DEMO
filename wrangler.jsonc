@@ -1,0 +1,10 @@
+{
+  // Cloudflare Workers config: serves the static demo from ./out (build it first with `npm run export`).
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "patil-constructions-demo",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  }
+}
